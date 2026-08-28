@@ -1,6 +1,5 @@
 """
 NetSage AI - Enterprise Network Diagnostic & HITL Oversight Platform
-Author: Akash Verma
 Module: src/app.py
 """
 
@@ -44,14 +43,14 @@ if "audit_history" not in st.session_state:
             "timestamp": "19:42:15",
             "case_id": "NET-001",
             "action": "APPROVED",
-            "operator": "Akash (Lead NOC)",
+            "operator": "Lead NOC Engineer",
             "commands": "configure terminal\ninterface GigabitEthernet0/0.10\nno shutdown\nend"
         },
         {
             "timestamp": "19:48:30",
             "case_id": "NET-005",
             "action": "OVERRIDDEN",
-            "operator": "Akash (Lead NOC)",
+            "operator": "Lead NOC Engineer",
             "commands": "configure terminal\nip access-list extended 101\npermit tcp 192.168.10.0 0.0.0.255 host 10.0.0.10 eq 80\nend"
         }
     ]
@@ -65,7 +64,7 @@ if "ping_sim_results" not in st.session_state:
 if "active_case_id" not in st.session_state:
     st.session_state.active_case_id = "NET-001"
 
-# Professional Clean Light Theme CSS with Explicit High-Contrast Dropdowns & Terminals
+# Professional Clean Light Theme CSS with Explicit High-Contrast Dropdowns, Terminals, and Plotly Charts
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
@@ -168,6 +167,28 @@ st.markdown("""
     div[role="option"] * {
         color: #0f172a !important;
         -webkit-text-fill-color: #0f172a !important;
+    }
+
+    /* ========================================================= */
+    /* PLOTLY GRAPH TEXT HIGH-CONTRAST OVERRIDES                */
+    /* ========================================================= */
+    .js-plotly-plot,
+    .js-plotly-plot .plotly,
+    .js-plotly-plot .plot-container {
+        background-color: #ffffff !important;
+    }
+    .js-plotly-plot text,
+    .js-plotly-plot .xtick text,
+    .js-plotly-plot .ytick text,
+    .js-plotly-plot .legendtext,
+    .js-plotly-plot .gtitle,
+    .js-plotly-plot .xtitle,
+    .js-plotly-plot .ytitle,
+    .js-plotly-plot .cbaxis text,
+    .js-plotly-plot .cbtitle text {
+        fill: #0f172a !important;
+        color: #0f172a !important;
+        font-weight: 600 !important;
     }
 
     /* ========================================================= */
@@ -704,7 +725,7 @@ with tab_triage:
                     "timestamp": datetime.datetime.now().strftime("%H:%M:%S"),
                     "case_id": diagnosis['case_id'],
                     "action": "APPROVED",
-                    "operator": "Akash (Lead NOC)",
+                    "operator": "Lead NOC Engineer",
                     "commands": remediation_input
                 })
                 st.success(f"Case {diagnosis['case_id']} approved for deployment.")
@@ -715,7 +736,7 @@ with tab_triage:
                     "timestamp": datetime.datetime.now().strftime("%H:%M:%S"),
                     "case_id": diagnosis['case_id'],
                     "action": "OVERRIDDEN",
-                    "operator": "Akash (Lead NOC)",
+                    "operator": "Lead NOC Engineer",
                     "commands": remediation_input
                 })
                 st.info(f"Operator override recorded for {diagnosis['case_id']}.")
@@ -726,7 +747,7 @@ with tab_triage:
                     "timestamp": datetime.datetime.now().strftime("%H:%M:%S"),
                     "case_id": diagnosis['case_id'],
                     "action": "REJECTED",
-                    "operator": "Akash (Lead NOC)",
+                    "operator": "Lead NOC Engineer",
                     "commands": "N/A"
                 })
                 st.error(f"AI diagnosis rejected for {diagnosis['case_id']}.")
@@ -871,7 +892,7 @@ with tab_topology:
             """, unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# TAB 3: Diagnostic Telemetry & Metrics
+# TAB 3: Diagnostic Telemetry & Metrics (Explicit High-Contrast)
 # ---------------------------------------------------------
 with tab_analytics:
     st.markdown("#### 📈 Telemetry Distribution & Model Accuracy")
@@ -888,17 +909,34 @@ with tab_analytics:
             x="concept_tag",
             y="count",
             color="count",
-            color_continuous_scale="Blues",
-            labels={"concept_tag": "Technology Tag", "count": "Cases"}
+            color_continuous_scale=[[0, "#93c5fd"], [1, "#1d4ed8"]],
+            labels={"concept_tag": "Technology Tag", "count": "Cases"},
+            template="plotly_white"
         )
         fig_tag.update_layout(
-            height=300,
+            height=320,
             margin=dict(l=20, r=20, t=20, b=40),
             paper_bgcolor="#ffffff",
-            plot_bgcolor="#f8fafc",
-            font=dict(color="#1e293b", family="Inter")
+            plot_bgcolor="#ffffff",
+            font=dict(color="#0f172a", family="Inter", size=12),
+            xaxis=dict(
+                title_font=dict(color="#0f172a", size=12, family="Inter"),
+                tickfont=dict(color="#0f172a", size=11, family="Inter"),
+                gridcolor="#f1f5f9",
+                linecolor="#cbd5e1"
+            ),
+            yaxis=dict(
+                title_font=dict(color="#0f172a", size=12, family="Inter"),
+                tickfont=dict(color="#0f172a", size=11, family="Inter"),
+                gridcolor="#f1f5f9",
+                linecolor="#cbd5e1"
+            ),
+            coloraxis_colorbar=dict(
+                title_font=dict(color="#0f172a"),
+                tickfont=dict(color="#0f172a")
+            )
         )
-        st.plotly_chart(fig_tag, use_container_width=True)
+        st.plotly_chart(fig_tag, use_container_width=True, theme=None)
         
     with chart_col2:
         st.markdown("##### Scenario Distribution by OSI Layer")
@@ -910,16 +948,21 @@ with tab_analytics:
             names="osi_layer",
             values="count",
             hole=0.5,
-            color_discrete_sequence=["#2563eb", "#059669", "#7c3aed", "#d97706", "#dc2626"]
+            color_discrete_sequence=["#2563eb", "#059669", "#7c3aed", "#d97706", "#dc2626"],
+            template="plotly_white"
         )
         fig_osi.update_layout(
-            height=300,
+            height=320,
             margin=dict(l=20, r=20, t=20, b=20),
             paper_bgcolor="#ffffff",
             plot_bgcolor="#ffffff",
-            font=dict(color="#1e293b", family="Inter")
+            font=dict(color="#0f172a", family="Inter", size=12),
+            legend=dict(
+                font=dict(color="#0f172a", family="Inter", size=11),
+                title_font=dict(color="#0f172a", family="Inter", size=12)
+            )
         )
-        st.plotly_chart(fig_osi, use_container_width=True)
+        st.plotly_chart(fig_osi, use_container_width=True, theme=None)
 
     # Secondary Metrics Row
     chart_col3, chart_col4 = st.columns(2)
@@ -934,16 +977,33 @@ with tab_analytics:
             x="severity",
             y="count",
             color="severity",
-            color_discrete_map={"High": "#dc2626", "Medium": "#d97706", "Low": "#059669"}
+            color_discrete_map={"High": "#dc2626", "Medium": "#d97706", "Low": "#059669", "Critical": "#991b1b"},
+            template="plotly_white"
         )
         fig_sev.update_layout(
-            height=250,
+            height=270,
             margin=dict(l=20, r=20, t=20, b=20),
             paper_bgcolor="#ffffff",
-            plot_bgcolor="#f8fafc",
-            font=dict(color="#1e293b", family="Inter")
+            plot_bgcolor="#ffffff",
+            font=dict(color="#0f172a", family="Inter", size=12),
+            xaxis=dict(
+                title_font=dict(color="#0f172a", size=12, family="Inter"),
+                tickfont=dict(color="#0f172a", size=11, family="Inter"),
+                gridcolor="#f1f5f9",
+                linecolor="#cbd5e1"
+            ),
+            yaxis=dict(
+                title_font=dict(color="#0f172a", size=12, family="Inter"),
+                tickfont=dict(color="#0f172a", size=11, family="Inter"),
+                gridcolor="#f1f5f9",
+                linecolor="#cbd5e1"
+            ),
+            legend=dict(
+                font=dict(color="#0f172a", family="Inter", size=11),
+                title_font=dict(color="#0f172a", family="Inter", size=12)
+            )
         )
-        st.plotly_chart(fig_sev, use_container_width=True)
+        st.plotly_chart(fig_sev, use_container_width=True, theme=None)
         
     with chart_col4:
         st.markdown("##### Mean Time to Resolution (MTTR) Comparison")
@@ -956,16 +1016,33 @@ with tab_analytics:
             x="Method",
             y="Minutes",
             color="Method",
-            color_discrete_sequence=["#94a3b8", "#f59e0b", "#16a34a"]
+            color_discrete_sequence=["#64748b", "#d97706", "#16a34a"],
+            template="plotly_white"
         )
         fig_mttr.update_layout(
-            height=250,
+            height=270,
             margin=dict(l=20, r=20, t=20, b=20),
             paper_bgcolor="#ffffff",
-            plot_bgcolor="#f8fafc",
-            font=dict(color="#1e293b", family="Inter")
+            plot_bgcolor="#ffffff",
+            font=dict(color="#0f172a", family="Inter", size=12),
+            xaxis=dict(
+                title_font=dict(color="#0f172a", size=12, family="Inter"),
+                tickfont=dict(color="#0f172a", size=11, family="Inter"),
+                gridcolor="#f1f5f9",
+                linecolor="#cbd5e1"
+            ),
+            yaxis=dict(
+                title_font=dict(color="#0f172a", size=12, family="Inter"),
+                tickfont=dict(color="#0f172a", size=11, family="Inter"),
+                gridcolor="#f1f5f9",
+                linecolor="#cbd5e1"
+            ),
+            legend=dict(
+                font=dict(color="#0f172a", family="Inter", size=11),
+                title_font=dict(color="#0f172a", family="Inter", size=12)
+            )
         )
-        st.plotly_chart(fig_mttr, use_container_width=True)
+        st.plotly_chart(fig_mttr, use_container_width=True, theme=None)
 
 # ---------------------------------------------------------
 # TAB 4: Human-in-the-Loop Audit Log
@@ -1049,6 +1126,6 @@ with tab_sandbox:
 st.markdown("---")
 st.markdown("""
 <div style="text-align: center; color: #94a3b8; font-size: 12px; padding: 10px 0;">
-    <strong>NetSage AI</strong> &bull; Cisco Packet Tracer Diagnostic &amp; HITL Operations Platform &bull; Author: <em>Akash Verma</em>
+    <strong>NetSage AI</strong> &bull; Cisco Packet Tracer Diagnostic &amp; HITL Operations Platform
 </div>
 """, unsafe_allow_html=True)
